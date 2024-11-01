@@ -1,5 +1,3 @@
-// Watch my Discord Bot Project Tutorial video here: https://youtu.be/pDQAn18-2go - Discord Bot Tutorial | JavaScript & Node.js
-
 // require('dotenv').config();
 
 const {token} = require('./config.json');
@@ -7,22 +5,33 @@ const axios = require('axios');
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, ButtonBuilder, ButtonStyle, ModalBuilder } = require('discord.js');
+const Sequelize = require('sequelize');
 
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, 
         GatewayIntentBits.GuildMessages, 
         GatewayIntentBits.MessageContent] 
-    });
+});
 
+// const sequelize = new Sequelize('database', 'user', 'password', {
+// 	host: 'localhost',
+// 	dialect: 'sqlite',
+// 	logging: false,
+// 	// SQLite only
+// 	storage: 'database.sqlite',
+// });
+
+// import {Tags, addTag} from "./models/tag.js";
+const database = require('./models/tag.js');
 
 client.on('ready', () => {
-    console.log('bot is ready');
+	console.log('bot is ready');
 })
 
 const button = new ButtonBuilder()
-    .setCustomId('testbutton')
-    .setLabel("Button 1")
-    .setStyle(ButtonStyle.Primary);
+.setCustomId('testbutton')
+.setLabel("Button 1")
+.setStyle(ButtonStyle.Primary);
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
@@ -43,14 +52,19 @@ for (const folder of commandFolders) {
 	}
 }
 
-client.on(Events.InteractionCreate, interaction => {
-	console.log(interaction);
+client.once(Events.ClientReady, readyClient => {
+	database.Tags.sync();
+	console.log(`Logged in as ${readyClient.user.tag}!`);
 });
 
-client.on(Events.InteractionCreate, interaction => {
-	if (!interaction.isChatInputCommand()) return;
-	console.log(interaction);
-});
+// client.on(Events.InteractionCreate, interaction => {
+// 	console.log(interaction);
+// });
+
+// client.on(Events.InteractionCreate, interaction => {
+// 	if (!interaction.isChatInputCommand()) return;
+// 	console.log(interaction);
+// });
 
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
@@ -91,4 +105,24 @@ client.on(Events.InteractionCreate, async interaction => {
 // })
 
 // client.login(process.env.DISCORD_BOT_ID);
+
+client.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+
+	const { commandName } = interaction;
+	if (commandName === 'addtag')
+		database.addTag(interaction);
+	else if (commandName === 'getTag')
+		database.getTag(interaction);
+	else if (commandName === 'editTag')
+		database.editTag(interaction);
+	else if (commandName === 'tagInfo')
+		database.tagInfo(interaction);
+	else if (commandName === 'showTags')
+		database.showTags(interaction);
+	else if (commandName === 'deleteTag')
+		database.deleteTag(interaction);
+});
+
+
 client.login(token);
