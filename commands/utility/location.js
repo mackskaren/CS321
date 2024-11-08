@@ -3,8 +3,10 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('location')
-		.setDescription('current working location'),
+		.setDescription('current working location')
+		.addIntegerOption(option => option.setName('zip').setDescription('zip code to set')),
 	async execute(interaction) {
-		await interaction.reply('Will reply with current zip code');
+		const zip = await interaction.options.getInteger("zip");
+		await interaction.reply(`zip code to test ${zip}`);
 	},
 };

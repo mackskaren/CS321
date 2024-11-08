@@ -78,6 +78,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 	try {
 		await command.execute(interaction);
+		//essage.author.send("hello");
 	} catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {

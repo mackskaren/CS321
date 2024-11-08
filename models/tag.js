@@ -24,6 +24,13 @@ module.exports.Tags = sequelize.define('tags', {
 	},
 	description: Sequelize.TEXT,
 	username: Sequelize.STRING,
+	//zipcode: Sequelize.INTEGER,
+	//choice1: Sequelize.String,
+	//choice2: Sequelize.String,
+	//choice3: Sequelize.String,
+	//choice4: Sequelize.String,
+	//choice5: Sequelize.String
+	//
 	usage_count: {
 		type: Sequelize.INTEGER,
 		defaultValue: 0,
