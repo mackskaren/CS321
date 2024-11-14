@@ -6,32 +6,22 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, ButtonBuilder, ButtonStyle, ModalBuilder } = require('discord.js');
 const Sequelize = require('sequelize');
+const {buttonpress} = require('./events/button.js');
+const {selectresponse} = require('./events/selectmenu.js');
 
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, 
         GatewayIntentBits.GuildMessages, 
-        GatewayIntentBits.MessageContent] 
+        GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers] 
 });
 
-// const sequelize = new Sequelize('database', 'user', 'password', {
-// 	host: 'localhost',
-// 	dialect: 'sqlite',
-// 	logging: false,
-// 	// SQLite only
-// 	storage: 'database.sqlite',
-// });
-
-// import {Tags, addTag} from "./models/tag.js";
 const database = require('./models/tag.js');
 
 client.on('ready', () => {
 	console.log('bot is ready');
-})
+});
 
-const button = new ButtonBuilder()
-.setCustomId('testbutton')
-.setLabel("Button 1")
-.setStyle(ButtonStyle.Primary);
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
@@ -50,80 +40,40 @@ for (const folder of commandFolders) {
 			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
 	}
-}
+};
 
 client.once(Events.ClientReady, readyClient => {
 	database.Tags.sync();
 	console.log(`Logged in as ${readyClient.user.tag}!`);
 });
 
-// client.on(Events.InteractionCreate, interaction => {
-// 	console.log(interaction);
-// });
-
-// client.on(Events.InteractionCreate, interaction => {
-// 	if (!interaction.isChatInputCommand()) return;
-// 	console.log(interaction);
-// });
-
 client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
+	if (interaction.isChatInputCommand()) {
+		const command = interaction.client.commands.get(interaction.commandName);
 
-	const command = interaction.client.commands.get(interaction.commandName);
+		if (!command) {
+			console.error(`No command matching ${interaction.commandName} was found.`);
+			return;
+		}
 
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-		return;
-	}
-
-	try {
-		await command.execute(interaction);
-		//essage.author.send("hello");
-	} catch (error) {
-		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		try {
+			await command.execute(interaction);
+			//essage.author.send("hello");
+		} catch (error) {
+			console.error(error);
+			if (interaction.replied || interaction.deferred) {
+				await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+			} else {
+				await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			}
 		}
 	}
+	else if (interaction.isButton()) {
+		buttonpress(interaction);
+	}
+	else if (interaction.isStringSelectMenu()) {
+		selectresponse(interaction);
+	}
 });
-
-// client.on('messageCreate', async (message) => {
-//     if (message.content === 'ping') {
-//         message.reply({
-//             content: 'pong',
-//         })
-//     }
-//     else if (message.content === 'quote') {
-//         let resp = await axios.get(`https://api.quotable.io/random`);
-//         const quote = resp.data.content;
-
-//         message.reply({
-//             content: quote,
-//         })
-//     }
-// })
-
-// client.login(process.env.DISCORD_BOT_ID);
-
-client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-
-	const { commandName } = interaction;
-	if (commandName === 'addtag')
-		database.addTag(interaction);
-	else if (commandName === 'getTag')
-		database.getTag(interaction);
-	else if (commandName === 'editTag')
-		database.editTag(interaction);
-	else if (commandName === 'tagInfo')
-		database.tagInfo(interaction);
-	else if (commandName === 'showTags')
-		database.showTags(interaction);
-	else if (commandName === 'deleteTag')
-		database.deleteTag(interaction);
-});
-
 
 client.login(token);

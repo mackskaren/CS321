@@ -22,20 +22,20 @@ module.exports.Tags = sequelize.define('tags', {
 		type: Sequelize.STRING,
 		unique: true,
 	},
-	description: Sequelize.TEXT,
-	username: Sequelize.STRING,
-	//zipcode: Sequelize.INTEGER,
-	//choice1: Sequelize.String,
-	//choice2: Sequelize.String,
-	//choice3: Sequelize.String,
-	//choice4: Sequelize.String,
-	//choice5: Sequelize.String
+	// description: Sequelize.TEXT,
+	// username: Sequelize.STRING,
+	zipcode: Sequelize.INTEGER,
+	choice1: Sequelize.STRING,
+	choice2: Sequelize.STRING,
+	choice3: Sequelize.STRING,
+	choice4: Sequelize.STRING,
+	choice5: Sequelize.STRING
 	//
-	usage_count: {
-		type: Sequelize.INTEGER,
-		defaultValue: 0,
-		allowNull: false,
-	},
+	// usage_count: {
+	// 	type: Sequelize.INTEGER,
+	// 	defaultValue: 0,
+	// 	allowNull: false,
+	// },
 });
 
 
