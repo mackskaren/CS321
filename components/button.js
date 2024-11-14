@@ -13,8 +13,13 @@ const button2 = new ButtonBuilder()
     .setLabel('Leave Bot Services')
     .setEmoji('👋')
 	.setStyle(ButtonStyle.Danger);
+const button3 = new ButtonBuilder()
+    .setCustomId("zip code")
+    .setLabel('zip code')
+    .setEmoji('🤐')
+    .setStyle(ButtonStyle.Secondary);
 
-buttons.addComponents(button1, button2);
+buttons.addComponents(button1, button2, button3);
 
 module.exports = {
     buttons: buttons,

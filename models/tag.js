@@ -14,58 +14,77 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 // 		type: Sequelize.STRING,
 // 		unique: true,
 // 	},
-//     hobbies: Sequelize.ARRAY(Sequelize.TEXT),
+//     addition: Sequelize.ARRAY(Sequelize.TEXT),
 // 	availability: Sequelize.TEXT,
 // });
-module.exports.Tags = sequelize.define('tags', {
+const Tags = sequelize.define('tags', {
 	name: {
 		type: Sequelize.STRING,
 		unique: true,
 	},
 	// description: Sequelize.TEXT,
 	// username: Sequelize.STRING,
-	zipcode: Sequelize.INTEGER,
-	choice1: Sequelize.STRING,
-	choice2: Sequelize.STRING,
-	choice3: Sequelize.STRING,
-	choice4: Sequelize.STRING,
-	choice5: Sequelize.STRING
-	//
-	// usage_count: {
-	// 	type: Sequelize.INTEGER,
-	// 	defaultValue: 0,
-	// 	allowNull: false,
-	// },
+	zipcode: {
+		type: Sequelize.INTEGER,
+		defaultValue: 0,
+	},
+	choice1: {
+		type: Sequelize.STRING,
+		allowNull: true,
+	},
+	choice2: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	choice3: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	choice4: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	choice5: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
 });
+module.exports.Tags = Tags;
 
 
 
 module.exports.addTag = async function addTag(interaction){
-    const tagName = interaction.options.getString('name');
-    const tagDescription = interaction.options.getString('description');
-
+    const tagName = interaction.user.username;
+    // const tagDescription = interaction.options.getString('description');
+	await interaction.deferReply({ephemeral: true});
     try {
         // equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
         const tag = await Tags.create({
             name: tagName,
-            description: tagDescription,
-            username: interaction.user.username,
+            zipcode: 0,
+			choice1: null,
+			choice2: null,
+			choice3: null,
+			choice4: null,
+			choice5: null,
         });
 
-        return interaction.reply(`Tag ${tag.name} added.`);
+        return await interaction.editReply({content: `Tag ${tag.name} added.`, ephemeral: true});
     }
     catch (error) {
+		console.log(error);
         if (error.name === 'SequelizeUniqueConstraintError') {
-            return interaction.reply('That tag already exists.');
+            return await interaction.editReply({content: 'That tag already exists.', ephemeral: true});
         }
 
-        return interaction.reply('Something went wrong with adding a tag.');
+        return await interaction.editReply({content: 'Something went wrong with adding a tag.', ephemeral: true});
     }
 };
 
 module.exports.getTag = async function getTag(interaction) {
 
     const tagName = interaction.options.getString('name');
+	await interaction.deferReply({ephemeral: true});
 
 	// equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
 	const tag = await Tags.findOne({ where: { name: tagName } });
@@ -74,53 +93,67 @@ module.exports.getTag = async function getTag(interaction) {
 		// equivalent to: UPDATE tags SET usage_count = usage_count + 1 WHERE name = 'tagName';
 		tag.increment('usage_count');
 
-		return interaction.reply(tag.get('description'));
+		return await interaction.editReply(tag.get('description'));
 	}
 
-	return interaction.reply(`Could not find tag: ${tagName}`);
+	return await interaction.editReply(`Could not find tag: ${tagName}`);
 };
 
-module.exports.editTag = async function editTag(interaction) {
-    const tagName = interaction.options.getString('name');
-	const tagDescription = interaction.options.getString('description');
-
-	// equivalent to: UPDATE tags (description) values (?) WHERE name='?';
-	const affectedRows = await Tags.update({ description: tagDescription }, { where: { name: tagName } });
+module.exports.editTag = async function editTag(interaction, addition) {
+    const tagName = interaction.user.username;
+	await interaction.deferReply({ephemeral: true});
+	let affectedRows = 0;
+	
+	if (isNaN(addition)) {
+		affectedRows = await Tags.update({ choice1: addition[0],
+			choice2: addition[1],
+			choice3: addition[2],
+			choice4: addition[3],
+			choice5: addition[4],
+		}, { where: { name: tagName } });
+	}
+	else
+		affectedRows = await Tags.update({zipcode: addition}, {where: { name : tagName }});
 
 	if (affectedRows > 0) {
-		return interaction.reply(`Tag ${tagName} was edited.`);
+		return await interaction.editReply({content: `Tag ${tagName} was edited.`, ephemeral: true});
 	}
 
-	return interaction.reply(`Could not find a tag with name ${tagName}.`);
+	return await interaction.editReply({content: `Could not find a tag with name ${tagName}.`, ephemeral: true});
 };
 
 module.exports.tagInfo = async function tagInfo(interaction) {
     const tagName = interaction.options.getString('name');
+	await interaction.deferReply({ephemeral: true});
 
 	// equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
 	const tag = await Tags.findOne({ where: { name: tagName } });
 
 	if (tag) {
-		return interaction.reply(`${tagName} was created by ${tag.username} at ${tag.createdAt} and has been used ${tag.usage_count} times.`);
+		return await interaction.editReply(`${tagName} was created by ${tag.username} at ${tag.createdAt} and has been used ${tag.usage_count} times.`);
 	}
 
-	return interaction.reply(`Could not find tag: ${tagName}`);
+	return await interaction.editReply(`Could not find tag: ${tagName}`);
 };
 
 module.exports.showTags = async function showTags(interaction) {
     // equivalent to: SELECT name FROM tags;
+	await interaction.deferReply({ephemeral: true});
+
 	const tagList = await Tags.findAll({ attributes: ['name'] });
 	const tagString = tagList.map(t => t.name).join(', ') || 'No tags set.';
 
-	return interaction.reply(`List of tags: ${tagString}`);
+	return await interaction.editReply(`List of tags: ${tagString}`);
 };
 
 module.exports.deleteTag = async function deleteTag(interaction) {
-    const tagName = interaction.options.getString('name');
+    const tagName = interaction.user.username;
+	await interaction.deferReply({ephemeral: true});
+
 	// equivalent to: DELETE from tags WHERE name = ?;
 	const rowCount = await Tags.destroy({ where: { name: tagName } });
 
-	if (!rowCount) return interaction.reply('That tag doesn\'t exist.');
+	if (!rowCount) return await interaction.editReply({content: 'That tag doesn\'t exist.', ephemeral: true});
 
-	return interaction.reply('Tag deleted.');
-}
+	return await interaction.editReply({content: 'Tag deleted.', ephemeral: true});
+};

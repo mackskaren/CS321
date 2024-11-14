@@ -1,5 +1,17 @@
+const {editTag} = require("../models/tag.js");
+// const { options } = require('../components/selectmenu.js')
+
 const selectresponse = (async interaction => {
-    interaction.reply({content: 'reply received. need to store', ephemeral: true});
+
+    // console.log(interaction);
+    let hobbies = interaction.values;
+    // console.log(hobbies);
+    while (hobbies.length < 5) {
+        hobbies.push(null);
+    }
+    // console.log(hobbies);
+    await editTag(interaction, hobbies);
+    // await interaction.reply({content: 'reply received. need to store', ephemeral: true});
 
     // const collector = interaction.createMessageComponentCollector({
     //     componentType: ComponentType.StringSelect,

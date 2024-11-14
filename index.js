@@ -8,6 +8,7 @@ const { Client, Collection, Events, GatewayIntentBits, ButtonBuilder, ButtonStyl
 const Sequelize = require('sequelize');
 const {buttonpress} = require('./events/button.js');
 const {selectresponse} = require('./events/selectmenu.js');
+const {modalresponse} = require('./events/modal.js');
 
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, 
@@ -73,6 +74,9 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 	else if (interaction.isStringSelectMenu()) {
 		selectresponse(interaction);
+	}
+	else if (interaction.isModalSubmit()) {
+		modalresponse(interaction);
 	}
 });
 

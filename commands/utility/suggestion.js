@@ -34,7 +34,7 @@ module.exports = {
             const longitude = geocodeData.features[0].properties.lon;
 
 			const categoryMap = { // categories based on hobbies
-				'shopping': 'commercial.marketplace',
+				'shopping': 'commercial.supermarket',
 				'market': 'commercial.marketplace',
 				'dining': 'catering.restaurant',
 				'sports': 'activity.sport',
@@ -65,16 +65,6 @@ module.exports = {
 		}
 	},
 };
-
-
-
-
-
-
-
-
-
-
 
 // //https://api.geoapify.com/v2/places?categories=commercial.supermarket&filter=rect%3A10.716463143326969%2C48.755151258420966%2C10.835314015356737%2C48.680903341613316&limit=20&apiKey=e391a7e5c6144c83abfa40cfca71c114
 
