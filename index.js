@@ -17,7 +17,6 @@ const client = new Client({
 		GatewayIntentBits.GuildMembers] 
 });
 
-const database = require('./models/tag.js');
 
 client.on('ready', () => {
 	console.log('bot is ready');
@@ -43,41 +42,55 @@ for (const folder of commandFolders) {
 	}
 };
 
-client.once(Events.ClientReady, readyClient => {
-	database.Tags.sync();
-	console.log(`Logged in as ${readyClient.user.tag}!`);
-});
+// client.once(Events.ClientReady, readyClient => {
+// 	const database = require('./models/tag.js');
+// 	database.Tags.sync();
+// 	console.log(`Logged in as ${readyClient.user.tag}!`);
+// });
 
-client.on(Events.InteractionCreate, async interaction => {
-	if (interaction.isChatInputCommand()) {
-		const command = interaction.client.commands.get(interaction.commandName);
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-		if (!command) {
-			console.error(`No command matching ${interaction.commandName} was found.`);
-			return;
-		}
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event = require(filePath);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
+	}
+};
 
-		try {
-			await command.execute(interaction);
-			//essage.author.send("hello");
-		} catch (error) {
-			console.error(error);
-			if (interaction.replied || interaction.deferred) {
-				await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-			} else {
-				await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-			}
-		}
-	}
-	else if (interaction.isButton()) {
-		buttonpress(interaction);
-	}
-	else if (interaction.isStringSelectMenu()) {
-		selectresponse(interaction);
-	}
-	else if (interaction.isModalSubmit()) {
-		modalresponse(interaction);
-	}
-});
+// client.on(Events.InteractionCreate, async interaction => {
+// 	if (interaction.isChatInputCommand()) {
+// 		const command = interaction.client.commands.get(interaction.commandName);
+
+// 		if (!command) {
+// 			console.error(`No command matching ${interaction.commandName} was found.`);
+// 			return;
+// 		}
+
+// 		try {
+// 			await command.execute(interaction);
+// 			//essage.author.send("hello");
+// 		} catch (error) {
+// 			console.error(error);
+// 			if (interaction.replied || interaction.deferred) {
+// 				await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+// 			} else {
+// 				await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+// 			}
+// 		}
+// 	}
+// 	else if (interaction.isButton()) {
+// 		buttonpress(interaction);
+// 	}
+// 	else if (interaction.isStringSelectMenu()) {
+// 		selectresponse(interaction);
+// 	}
+// 	else if (interaction.isModalSubmit()) {
+// 		modalresponse(interaction);
+// 	}
+// });
 
 client.login(token);

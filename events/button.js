@@ -19,6 +19,6 @@ const buttonpress = (async interaction => {
 
 
 module.exports = {
-    buttonpress: buttonpress,
+    buttonpress,
     
-}
+};

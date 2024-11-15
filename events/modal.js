@@ -11,5 +11,5 @@ const modalresponse = async (interaction) => {
 
 
 module.exports = {
-    modalresponse: modalresponse
-}
+    modalresponse,
+};

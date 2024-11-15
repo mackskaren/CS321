@@ -37,6 +37,6 @@ const selectresponse = (async interaction => {
 
 
 module.exports = {
-    selectresponse: selectresponse,
+    selectresponse,
     
 };
