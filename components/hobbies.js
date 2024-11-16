@@ -105,7 +105,7 @@ const options = [
 
 
 const choice1 = new StringSelectMenuBuilder()
-    .setCustomId('Choice 1')
+    .setCustomId('hobbies')
     .setPlaceholder('Select Hobbies')
     .addOptions(
         options
@@ -127,6 +127,6 @@ const choices = new ActionRowBuilder().addComponents(choice1);
 // zip.addComponents(zipcollector);
 
 module.exports = {
-    choices: choices,
+    choices,
     // zip: zip
 };

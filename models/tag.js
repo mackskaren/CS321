@@ -9,21 +9,15 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	storage: 'database.sqlite',
 });
 
-// export const Tags = sequelize.define('tags', {
-// 	name: {
-// 		type: Sequelize.STRING,
-// 		unique: true,
-// 	},
-//     addition: Sequelize.ARRAY(Sequelize.TEXT),
-// 	availability: Sequelize.TEXT,
-// });
 const Tags = sequelize.define('tags', {
 	name: {
 		type: Sequelize.STRING,
 		unique: true,
 	},
-	// description: Sequelize.TEXT,
-	// username: Sequelize.STRING,
+	available: {
+		type: Sequelize.BOOLEAN,
+		defaultValue: false
+	},
 	zipcode: {
 		type: Sequelize.INTEGER,
 		defaultValue: 0,
@@ -48,6 +42,18 @@ const Tags = sequelize.define('tags', {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
+	days: {
+		type: Sequelize.JSON,
+		defaultValue: {
+			"monday": '',
+			"tuesday": '',
+			"wednesday": '',
+			"thursday": '',
+			"friday": '',
+			"saturday": '',
+			"sunday": ''
+		},
+	}
 });
 
 
@@ -55,7 +61,7 @@ const Tags = sequelize.define('tags', {
 const addTag = async (interaction) => {
 	const tagName = interaction.user.username;
     // const tagDescription = interaction.options.getString('description');
-	await interaction.deferReply({ephemeral: true});
+	await interaction.deferReply({ephemeral: true, });
     try {
 		// equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
         const tag = await Tags.create({
@@ -67,8 +73,17 @@ const addTag = async (interaction) => {
 			choice4: null,
 			choice5: null,
         });
-		
-        return await interaction.editReply({content: `Tag ${tag.name} added.`, ephemeral: true});
+		// const random = await Tags.create({
+		// 	name: 'random',
+        //     zipcode: 0,
+		// 	choice1: null,
+		// 	choice2: null,
+		// 	choice3: null,
+		// 	choice4: null,
+		// 	choice5: null,
+        // });
+		// updateAvailability();
+        return await interaction.editReply({content: `Tag ${tag.name} added.`, ephemeral: true, });
     }
     catch (error) {
 		console.log(error);
@@ -76,7 +91,7 @@ const addTag = async (interaction) => {
 			return await interaction.editReply({content: 'That tag already exists.', ephemeral: true});
         }
 		
-        return await interaction.editReply({content: 'Something went wrong with adding a tag.', ephemeral: true});
+        return await interaction.editReply({content: 'Something went wrong with adding a tag.', ephemeral: true, });
     }
 };
 
@@ -103,7 +118,7 @@ const editTag = async (interaction, addition) => {
 	await interaction.deferReply({ephemeral: true});
 	let affectedRows = 0;
 	
-	if (isNaN(addition)) {
+	if (typeof addition === 'object') {
 		affectedRows = await Tags.update({ choice1: addition[0],
 			choice2: addition[1],
 			choice3: addition[2],
@@ -112,13 +127,13 @@ const editTag = async (interaction, addition) => {
 		}, { where: { name: tagName } });
 	}
 	else
-	affectedRows = await Tags.update({zipcode: addition}, {where: { name : tagName }});
+		affectedRows = await Tags.update({zipcode: addition}, {where: { name : tagName }});
 
-if (affectedRows > 0) {
-	return await interaction.editReply({content: `Tag ${tagName} was edited.`, ephemeral: true});
-}
+	if (affectedRows > 0) {
+		return await interaction.editReply({content: `Tag ${tagName} was edited.`, ephemeral: true});
+	}
 
-return await interaction.editReply({content: `Could not find a tag with name ${tagName}.`, ephemeral: true});
+	return await interaction.editReply({content: `Could not find a tag with name ${tagName}.`, ephemeral: true});
 };
 
 const tagInfo = async (interaction)  => {
@@ -157,6 +172,25 @@ const deleteTag = async (interaction) => {
 	return await interaction.editReply({content: 'Tag deleted.', ephemeral: true});
 };
 
+const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+
+const updateAvailability = async (flag) => {
+	if (flag) 
+		setInterval(updateAvailability, 3600000, 0);
+	const date = new Date();
+	console.log(`updating availability at ${date.getHours()}:${date.getMinutes()}`);
+	const today = weekday[date.getDay()];
+	const people = await Tags.findAll();
+	// console.log(people);
+	for (person of people) {
+		console.log(person.name, person.days[today]);
+		if (person.days[today].includes(date.getHours()))
+			person.available = true;
+		else 
+			person.available = false;
+		await Tags.update({available: person.available}, { where: {name : person.name}});
+	}
+};
 
 module.exports = {
 	Tags,
@@ -165,5 +199,6 @@ module.exports = {
 	editTag,
 	tagInfo,
 	showTags,
-	deleteTag
+	deleteTag,
+	updateAvailability
 };

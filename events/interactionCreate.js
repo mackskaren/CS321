@@ -1,7 +1,8 @@
 const { Events } = require('discord.js');
-const {buttonpress} = require('./button.js');
-const {selectresponse} = require('./selectmenu.js');
+const {buttonpress} = require('./buttons.js');
+const {getHobbies} = require('./hobbies.js');
 const {modalresponse} = require('./modal.js');
+const {updateSchedule} = require('./schedule.js');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -30,7 +31,10 @@ module.exports = {
 			buttonpress(interaction);
 		}
 		else if (interaction.isStringSelectMenu()) {
-			selectresponse(interaction);
+			if (interaction.customId === 'hobbies')
+				getHobbies(interaction);
+			else
+				updateSchedule(interaction);
 		}
 		else if (interaction.isModalSubmit()) {
 			modalresponse(interaction);

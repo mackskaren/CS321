@@ -1,14 +1,10 @@
 // require('dotenv').config();
 
 const {token} = require('./config.json');
-const axios = require('axios');
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, ButtonBuilder, ButtonStyle, ModalBuilder } = require('discord.js');
-const Sequelize = require('sequelize');
-const {buttonpress} = require('./events/button.js');
-const {selectresponse} = require('./events/selectmenu.js');
-const {modalresponse} = require('./events/modal.js');
+const { Client, Collection, Events, GatewayIntentBits, } = require('discord.js');
+const { updateAvailability } = require("./models/tag.js");
 
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, 
@@ -42,12 +38,6 @@ for (const folder of commandFolders) {
 	}
 };
 
-// client.once(Events.ClientReady, readyClient => {
-// 	const database = require('./models/tag.js');
-// 	database.Tags.sync();
-// 	console.log(`Logged in as ${readyClient.user.tag}!`);
-// });
-
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
@@ -61,36 +51,14 @@ for (const file of eventFiles) {
 	}
 };
 
-// client.on(Events.InteractionCreate, async interaction => {
-// 	if (interaction.isChatInputCommand()) {
-// 		const command = interaction.client.commands.get(interaction.commandName);
-
-// 		if (!command) {
-// 			console.error(`No command matching ${interaction.commandName} was found.`);
-// 			return;
-// 		}
-
-// 		try {
-// 			await command.execute(interaction);
-// 			//essage.author.send("hello");
-// 		} catch (error) {
-// 			console.error(error);
-// 			if (interaction.replied || interaction.deferred) {
-// 				await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-// 			} else {
-// 				await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-// 			}
-// 		}
-// 	}
-// 	else if (interaction.isButton()) {
-// 		buttonpress(interaction);
-// 	}
-// 	else if (interaction.isStringSelectMenu()) {
-// 		selectresponse(interaction);
-// 	}
-// 	else if (interaction.isModalSubmit()) {
-// 		modalresponse(interaction);
-// 	}
-// });
+const date = new Date();
+// console.log(date);
+let time = 60000 * (60 - date.getMinutes());
+time -= 1000 * (59 - date.getSeconds());
+time -= 1000 - date.getMilliseconds();
+console.log(time);
+setTimeout(updateAvailability, time, 1);
+// timersPromises.setInterval();
+// setInterval(updateAvailability, 3600000);
 
 client.login(token);

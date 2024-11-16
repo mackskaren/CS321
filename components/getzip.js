@@ -27,5 +27,5 @@ modal.addComponents(secondActionRow);
 
 
 module.exports = {
-    modal: modal
+    modal
 }

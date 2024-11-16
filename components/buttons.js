@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, } = require('discord.js');
-const select = require('./selectmenu.js')
+const select = require('./hobbies.js')
 
 
 const buttons = new ActionRowBuilder();
@@ -18,10 +18,15 @@ const button3 = new ButtonBuilder()
     .setLabel('zip code')
     .setEmoji('🤐')
     .setStyle(ButtonStyle.Secondary);
+const button4 = new ButtonBuilder()
+    .setCustomId("schedule")
+    .setLabel('Availability')
+    .setEmoji('🗓️')
+    .setStyle(ButtonStyle.Secondary);
 
-buttons.addComponents(button1, button2, button3);
+buttons.addComponents(button1, button2, button3, button4);
 
 module.exports = {
-    buttons: buttons,
+    buttons,
     
 }

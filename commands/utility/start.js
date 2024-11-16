@@ -1,6 +1,7 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
-const {buttons} = require('../../components/button.js');
-const {choices} = require('../../components/selectmenu.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const {buttons} = require('../../components/buttons.js');
+const {choices} = require('../../components/hobbies.js');
+const {weekdays, weekend} = require('../../components/schedule.js')
 
 
 module.exports = {
@@ -23,7 +24,9 @@ module.exports = {
 					}
 				})
 			});
-			await interaction.reply({content: "testing buttons", components: [buttons, choices],});
+			await interaction.reply({content: "Welcome the Activity Scheduler!", components: [buttons, choices], });
+			await interaction.followUp({content: "Weekday Availability", components: weekdays});
+			await interaction.followUp({content: "Weekend Availability", components: weekend});
 			// await interaction.followUp({content: "testing buttons", components: choices,});
 		// }
 		// else {

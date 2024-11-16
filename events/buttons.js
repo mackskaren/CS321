@@ -1,9 +1,11 @@
 const {addTag, deleteTag} = require("../models/tag.js");
-const {modal} = require("../components/modal.js");
+const {modal} = require("../components/getzip.js");
 
 const buttonpress = (async interaction => {
     if (interaction.customId === "add to database") {
-        await addTag(interaction);
+    	// const message = await interaction.reply({content: "testing reaction", fetchReply: true});
+        const message = await addTag(interaction);
+        // message.react("🤝");
         // await interaction.reply({content: 'joined', ephemeral: true});
         // await interaction.reply({content: "Give your top 5 hobbies", components: select.choices});
     }
