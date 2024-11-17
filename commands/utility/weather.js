@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { CommandInteraction } = require('discord.js');
 const axios = require('axios');
+const { weather_token } = require('../../config.json');
+
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +17,7 @@ module.exports = {
      */
     async execute(interaction) {
         const cityName = interaction.options.getString('city');
-        const apiKey = 'a47fc356c2aab7376fcf8207745cfe92'; 
+        const apiKey = weather_token; 
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${apiKey}&units=metric`;
 
         try {
