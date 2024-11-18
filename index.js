@@ -4,7 +4,7 @@ const {token} = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, } = require('discord.js');
-const { updateAvailability } = require("./models/tag.js");
+// const { updateAvailability } = require("./models/tag.js");
 
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, 
@@ -51,13 +51,13 @@ for (const file of eventFiles) {
 	}
 };
 
-const date = new Date();
-// console.log(date);
-let time = 60000 * (60 - date.getMinutes());
-time -= 1000 * (59 - date.getSeconds());
-time -= 1000 - date.getMilliseconds();
-console.log(time);
-setTimeout(updateAvailability, time, 1);
+// const date = new Date();
+// // console.log(date);
+// let time = 60000 * (60 - date.getMinutes());
+// time -= 1000 * (59 - date.getSeconds());
+// time -= 1000 - date.getMilliseconds();
+// console.log(time);
+// setTimeout(updateAvailability, time, 1);
 // timersPromises.setInterval();
 // setInterval(updateAvailability, 3600000);
 

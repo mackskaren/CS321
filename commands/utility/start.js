@@ -5,6 +5,7 @@ const {weekdays, weekend} = require('../../components/schedule.js')
 
 
 module.exports = {
+	cooldown: 86400,
 	data: new SlashCommandBuilder()
 		.setName('start')
 		.setDescription('Message users in a server'),

@@ -2,6 +2,9 @@ const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder
 
 const options = [
     new StringSelectMenuOptionBuilder()
+        .setLabel('Unavailable')
+        .setValue("u"),
+    new StringSelectMenuOptionBuilder()
         .setLabel('9 AM')
         .setValue('9'),
     new StringSelectMenuOptionBuilder()

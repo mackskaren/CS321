@@ -1,4 +1,4 @@
-const {Tags} = require("../models/tag.js");
+const {getUser} = require("../models/tag.js");
 
 // const updateSchedule = (async interaction => {
 
@@ -16,30 +16,35 @@ const {Tags} = require("../models/tag.js");
 const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
 const updateSchedule = async (interaction) => {
-    let availability = interaction.values;
+    const availability = interaction.values;
     // console.log(hobbies);
     availability.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+	// console.log(availability[-1]);
     const day = interaction.customId;
 	const tagName = interaction.user.username;
-    const hours = availability.toString();
+    // const hours = availability.toString();
+	const hours = (availability[availability.length - 1] !== 'u') ? availability.toString() : "Unavailable";
 	
     await interaction.deferReply({ephemeral: true});
 	
-    const record = await Tags.findOne({ where: { name : tagName }});
+	const record = await getUser(interaction);
 	if (!record)
-		return await interaction.editReply({content: `Could not find a tag with name ${tagName}.`, ephemeral: true});
+		return await interaction.editReply({content: `Please join the bot services first.`, ephemeral: true});
 	// console.log(record);
-	record.days[day] = hours;
+	// record.days[day] = hours;
+	record[day] = hours;
 	// console.log(record);
 	// await record.update({days: record.days});
 	const date = new Date();
 	const today = weekday[date.getDay()];
-	if (today === day && record.days[today].includes(date.getHours()))
+	if (today === day && record[today].includes(date.getHours()))
 		record.available = true;
 	else 
 		record.available = false;
-	await Tags.update({available: record.available, days : record.days}, { where: {name : tagName}});
-	return await interaction.editReply({content: `Tag ${tagName} was edited.`, ephemeral: true});
+	await record.save();
+	// await Tags.update({available: record.available, days : record.days}, { where: {name : tagName}});
+
+	return await interaction.editReply({content: `Schedule for ${tagName} was updated.`, ephemeral: true});
 
 };
 
