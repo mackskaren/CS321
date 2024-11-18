@@ -164,17 +164,17 @@ const editTag = async (interaction, addition) => {
 };
 
 const tagInfo = async (interaction)  => {
-	const tagName = interaction.username;//options.getString('name');
-	await interaction.deferReply({ephemeral: true});
+	// const tagName = interaction.username;//options.getString('name');
+	// await interaction.deferReply({ephemeral: true});
 	
 	// equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
-	const tag = await Tags.findOne({ where: { name: tagName } });
+	// const tag = await Tags.findOne({ where: { name: tagName } });
+	return await Tags.findOne({ where: { name: interaction.user.username } });
+	// if (tag) {
+	// 	return await interaction.editReply(`${tagName} was created by ${tag.username} at ${tag.createdAt} and has been used ${tag.usage_count} times.`);
+	// }
 	
-	if (tag) {
-		return await interaction.editReply(`${tagName} was created by ${tag.username} at ${tag.createdAt} and has been used ${tag.usage_count} times.`);
-	}
-	
-	return await interaction.editReply(`Could not find tag: ${tagName}`);
+	// return await interaction.editReply(`Could not find tag: ${tagName}`);
 };
 
 const getAvailable = async (interaction) => {
