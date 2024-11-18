@@ -6,13 +6,9 @@ const options = [
         .setValue('Reading')
         .setEmoji("📚"),
     new StringSelectMenuOptionBuilder()
-        .setLabel('Watching TV shows and movies')
+        .setLabel('Watching TV shows and Movies')
         .setValue('Watching_TV_Shows_and_Movies')
         .setEmoji("📺"),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('Gaming')
-        .setValue('Gaming')
-        .setEmoji("🎮"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Music (listening, playing instruments, singing)')
         .setValue('Music')
@@ -37,10 +33,6 @@ const options = [
         .setLabel('Creative writing')
         .setValue('Creative_Writing')
         .setEmoji("✍️"),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('Coding and software development')
-        .setValue('Coding')
-        .setEmoji("💻"),
     new StringSelectMenuOptionBuilder()
         .setLabel('DIY crafts and art projects')
         .setValue('DIY_Crafts')
@@ -78,14 +70,6 @@ const options = [
         .setValue('Gardening')
         .setEmoji("🌱"),
     new StringSelectMenuOptionBuilder()
-        .setLabel('Collecting (trading cards, sneakers, etc.)')
-        .setValue('Collecting')
-        .setEmoji("🃏"),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('Anime and manga fandom')
-        .setValue('Anime_and_Manga')
-        .setEmoji("📖"),
-    new StringSelectMenuOptionBuilder()
         .setLabel('Board games or tabletop games')
         .setValue('Board_Games')
         .setEmoji("🎲"),
@@ -93,10 +77,6 @@ const options = [
         .setLabel('Volunteering and social activism')
         .setValue('Volunteering')
         .setEmoji("🤝"),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('Graphic design or digital art')
-        .setValue('Graphic_Design')
-        .setEmoji("🖌️"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Meditation and mindfulness practices')
         .setValue('Meditation')
@@ -106,7 +86,7 @@ const options = [
 
 const choice1 = new StringSelectMenuBuilder()
     .setCustomId('hobbies')
-    .setPlaceholder('Select Hobbies')
+    .setPlaceholder('Things to do as a group')
     .addOptions(
         options
     )

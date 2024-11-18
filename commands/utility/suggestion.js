@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const axios = require('axios');
 const { location_token } = require('../../config.json');
+const { getAvailable } = require('../../models/tag.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -34,13 +35,54 @@ module.exports = {
             const longitude = geocodeData.features[0].properties.lon;
 
 			const categoryMap = { // categories based on hobbies
+				/*'shopping': 'commercial.supermarket',
+				'market': 'commercial.marketplace',
+				'dining': 'catering.restaurant',
+				'sports': 'activity.sport',
+				'arts': 'entertainment.culture.gallery',
+				'movies': 'entertainment.cinema',
+				'nightlife': 'adult.nightclub',
+				'Reading': 'commercial.books',
+				'Watching_TV_Shows_and_Movies': 'entertainment.cinema',
+				'Music': 'commercial.video_and_music',
+				'exercising': 'sport.fitness',
+				'Photography_and_Videography': '',
+				'Playing_Sports': 'sport.fitness',
+				'Playing_Sports': 'sport.centre',
+				'Cooking_or_Baking': 'commercial.supermarket',
+				'Creative_Writing': '',
+				'DIY_Crafts': '',
+				'Skateboarding': '',
+				'Rollerblading': '',
+				'Fashion_and_Styling': 'commercial.shopping_mall',
+				'Dancing': '',
+				'Singing': '',
+				'Camping': 'natural.forest',
+				'Hiking_and_Nature_Exploration': 'natural.protected_area',
+				'Gardening': 'commercial.garden',
+				'Board_Games': 'commercial.toy_and_gamep',
+				'Volunteering': '',
+				'Meditation': ''*/
+
 				'shopping': 'commercial.supermarket',
 				'market': 'commercial.marketplace',
 				'dining': 'catering.restaurant',
 				'sports': 'activity.sport',
 				'arts': 'entertainment.culture.gallery',
 				'movies': 'entertainment.cinema',
-				'nightlife': 'adult.nightclub'
+				'nightlife': 'adult.nightclub',
+				'reading': 'commercial.books',
+				'watching_tv_shows_and_movies': 'entertainment.cinema',
+				'music': 'commercial.video_and_music',
+				'exercising': 'sport.fitness',
+				'playing_sports': 'sport.centre',
+				'cooking_or_baking': 'commercial.supermarket',
+				'fashion_and_styling': 'commercial.shopping_mall',
+				'camping': 'natural.forest',
+				'hiking_and_nature_exploration': 'natural.protected_area',
+				'gardening': 'commercial.garden',
+				'board_games': 'commercial.toy_and_game'
+				
 			};
 
 			const category = categoryMap[hobby]

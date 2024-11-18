@@ -1,7 +1,8 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const {buttons} = require('../../components/buttons.js');
-const {choices} = require('../../components/hobbies.js');
-const {weekdays, weekend} = require('../../components/schedule.js')
+// const {buttons} = require('../../components/buttons.js');
+// const {choices} = require('../../components/hobbies.js');
+// const {weekdays, weekend} = require('../../components/schedule.js');
+const { buttons, choices, weekdays, weekend } = require('../../components/components.js');
 
 
 module.exports = {

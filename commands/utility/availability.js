@@ -9,7 +9,8 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({});
 		let names = await getAvailable(interaction);
-		names = names.map(t => t.name).join('\n'); //|| 'No tags set.';
+		console.log(names);
+		names = names.map(entry => entry.name).join('\n'); //|| 'No tags set.';
 		if (names)
 			await interaction.editReply(`Available Users:\n${names}`);
 		else 
