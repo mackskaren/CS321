@@ -18,13 +18,13 @@ const button3 = new ButtonBuilder()
     .setLabel('zip code')
     .setEmoji('🤐')
     .setStyle(ButtonStyle.Secondary);
-const button4 = new ButtonBuilder()
-    .setCustomId("schedule")
-    .setLabel('Availability')
-    .setEmoji('🗓️')
-    .setStyle(ButtonStyle.Secondary);
+// const button4 = new ButtonBuilder()
+//     .setCustomId("schedule")
+//     .setLabel('Availability')
+//     .setEmoji('🗓️')
+//     .setStyle(ButtonStyle.Secondary);
 
-buttons.addComponents(button1, button2, button3, button4);
+buttons.addComponents(button1, button2, button3, );
 
 module.exports = {
     buttons,

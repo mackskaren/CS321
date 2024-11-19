@@ -37,7 +37,7 @@ const updateSchedule = async (interaction) => {
 	// await record.update({days: record.days});
 	const date = new Date();
 	const today = weekday[date.getDay()];
-	if (today === day && record[today].includes(date.getHours()))
+	if (record[today].includes(date.getHours()))
 		record.available = true;
 	else 
 		record.available = false;

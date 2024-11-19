@@ -44,31 +44,31 @@ const Tags = sequelize.define('users', {
 	},
 	monday: {
 		type: Sequelize.STRING,
-		defaultValue: ""
+		defaultValue: "Unavailable"
 	},
 	tuesday: {
 		type: Sequelize.STRING,
-		defaultValue: ""
+		defaultValue: "Unavailable"
 	},
 	wednesday: {
 		type: Sequelize.STRING,
-		defaultValue: ""
+		defaultValue: "Unavailable"
 	},
 	thursday: {
 		type: Sequelize.STRING,
-		defaultValue: ""
+		defaultValue: "Unavailable"
 	},
 	friday: {
 		type: Sequelize.STRING,
-		defaultValue: ""
+		defaultValue: "Unavailable"
 	},
 	saturday: {
 		type: Sequelize.STRING,
-		defaultValue: ""
+		defaultValue: "Unavailable"
 	},
 	sunday: {
 		type: Sequelize.STRING,
-		defaultValue: ""
+		defaultValue: "Unavailable"
 	}
 	// days: {
 	// 	type: Sequelize.JSON,
@@ -177,7 +177,7 @@ const tagInfo = async (interaction)  => {
 	// return await interaction.editReply(`Could not find tag: ${tagName}`);
 };
 
-const getAvailable = async (interaction) => {
+const getAvailable = async () => {
 	// equivalent to: SELECT name FROM tags;
 	// await interaction.deferReply({ephemeral: true});
 	

@@ -31,5 +31,8 @@ module.exports = {
             console.error(error);
             await interaction.reply('Sorry, I could not fetch the weather. Please make sure the city name is correct.');
         }
+    },
+    getWeather: () => {
+    
     }
 };

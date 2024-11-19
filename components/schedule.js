@@ -5,6 +5,15 @@ const options = [
         .setLabel('Unavailable')
         .setValue("u"),
     new StringSelectMenuOptionBuilder()
+        .setLabel('12 AM')
+        .setValue('0'),
+    new StringSelectMenuOptionBuilder()
+        .setLabel('1 AM')
+        .setValue('1'),
+    new StringSelectMenuOptionBuilder()
+        .setLabel('2 AM')
+        .setValue('2'),
+    new StringSelectMenuOptionBuilder()
         .setLabel('9 AM')
         .setValue('9'),
     new StringSelectMenuOptionBuilder()
@@ -49,9 +58,12 @@ const options = [
     new StringSelectMenuOptionBuilder()
         .setLabel('11 PM')
         .setValue('23'),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('12 AM')
-        .setValue('0'),
+    // new StringSelectMenuOptionBuilder()
+    //     .setLabel('1 AM')
+    //     .setValue('1'),
+    // new StringSelectMenuOptionBuilder()
+    //     .setLabel('2 AM')
+    //     .setValue('2'),
 ];
 
 

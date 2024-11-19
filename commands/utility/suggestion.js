@@ -1,27 +1,69 @@
 const { SlashCommandBuilder } = require('discord.js');
 const axios = require('axios');
 const { location_token } = require('../../config.json');
-const { getAvailable } = require('../../models/tag.js')
+const { getAvailable, getUser } = require('../../models/tag.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('suggestion')
-		.setDescription('give idea on what to do')
+		.setDescription('Give idea on what to do')
 		.addStringOption(option =>
 			option.setName('location')
 			.setDescription('Enter your location')
-			.setRequired(true))
+			.setRequired(false))
 		.addStringOption(option =>
 			option.setName('hobby')
 			.setDescription('What kind of activity are you interested in?')
-			.setRequired(true)),
+			.setRequired(false)),
 
 	async execute(interaction) {
-		const zipCode = interaction.options.getString('location');
-		const hobby = interaction.options.getString('hobby').toLowerCase();
+
+		//ppl available when the command is used.
+		let peopleAvailable = await getAvailable();
+		console.log(peopleAvailable);
+
+		// if the amount of people available is < 2 then don't recommend anything.
+		if(peopleAvailable.length < 2){
+			await interaction.reply({content: `Not enough people to recommend a group activity. You need at least 2 people currently available for an activity recommendation.`, ephemeral: true});
+			return;
+		}
+
+		//user who triggered command
+		let user = await getUser(interaction);
+		if (!user){
+			await interaction.reply({content: `Please join the bot services.`, ephemeral: true});
+			return;
+		}
+
+		//Location of the user that called the suggestion command.
+		let zipCode = user.zipcode;
+		if(!zipCode){
+			await interaction.reply({content: `Please enter a valid zipcode into the bot before calling this command or run /suggestion with the zip option.`, ephemeral: true});
+			return;
+		}
 
 		const geocodeUrl = `https://api.geoapify.com/v1/geocode/search?text=${zipCode}&apiKey=${location_token}`;
 
+		//recording all of caller's hobbies.
+		for (let i = 1; i < 6; i++) {
+			if (user[`choice${i}`])
+				console.log(user[`choice${i}`]);
+		}
+		
+		//picking a random activity to do depending on the caller's five hobbies.
+		let randomNum = Math.floor(Math.random() * 5) + 1;
+		let hobby = user[`choice${randomNum}`];
+		
+		if(!hobby){//validate hobby selections
+			await interaction.reply(`You do not have enough hobbies selected, please select at least 5.`);
+			return;
+		}
+
+		console.log(`Randomly selected hobby: ${hobby}`); //print out the hobby selected.
+		
+		//const zipCode = interaction.options.getString('location');
+		//const hobby = interaction.options.getString('hobby').toLowerCase();
+		
 		try{
 			const geocodeResponse = await axios.get(geocodeUrl);
 			const geocodeData = geocodeResponse.data;
@@ -35,59 +77,30 @@ module.exports = {
             const longitude = geocodeData.features[0].properties.lon;
 
 			const categoryMap = { // categories based on hobbies
-				/*'shopping': 'commercial.supermarket',
-				'market': 'commercial.marketplace',
-				'dining': 'catering.restaurant',
-				'sports': 'activity.sport',
-				'arts': 'entertainment.culture.gallery',
-				'movies': 'entertainment.cinema',
-				'nightlife': 'adult.nightclub',
+				
+				'Shopping': 'commercial.supermarket',
+				'Market': 'commercial.marketplace',
+				'Dining': 'catering.restaurant',
+				'Sports': 'activity.sport',
+				'Arts': 'entertainment.culture.gallery',
+				'Movies': 'entertainment.cinema',
+				'Nightlife': 'adult.nightclub',
 				'Reading': 'commercial.books',
 				'Watching_TV_Shows_and_Movies': 'entertainment.cinema',
 				'Music': 'commercial.video_and_music',
-				'exercising': 'sport.fitness',
-				'Photography_and_Videography': '',
+				'Exercising': 'sport.sports_centre',
 				'Playing_Sports': 'sport.fitness',
-				'Playing_Sports': 'sport.centre',
-				'Cooking_or_Baking': 'commercial.supermarket',
-				'Creative_Writing': '',
-				'DIY_Crafts': '',
-				'Skateboarding': '',
-				'Rollerblading': '',
-				'Fashion_and_Styling': 'commercial.shopping_mall',
-				'Dancing': '',
-				'Singing': '',
+				'Cooking_or_baking': 'commercial.supermarket',
+				'Fashion_and_styling': 'commercial.shopping_mall',
 				'Camping': 'natural.forest',
-				'Hiking_and_Nature_Exploration': 'natural.protected_area',
+				'Hiking_and_nature_exploration': 'natural.protected_area',
 				'Gardening': 'commercial.garden',
-				'Board_Games': 'commercial.toy_and_gamep',
-				'Volunteering': '',
-				'Meditation': ''*/
-
-				'shopping': 'commercial.supermarket',
-				'market': 'commercial.marketplace',
-				'dining': 'catering.restaurant',
-				'sports': 'activity.sport',
-				'arts': 'entertainment.culture.gallery',
-				'movies': 'entertainment.cinema',
-				'nightlife': 'adult.nightclub',
-				'reading': 'commercial.books',
-				'watching_tv_shows_and_movies': 'entertainment.cinema',
-				'music': 'commercial.video_and_music',
-				'exercising': 'sport.fitness',
-				'playing_sports': 'sport.centre',
-				'cooking_or_baking': 'commercial.supermarket',
-				'fashion_and_styling': 'commercial.shopping_mall',
-				'camping': 'natural.forest',
-				'hiking_and_nature_exploration': 'natural.protected_area',
-				'gardening': 'commercial.garden',
-				'board_games': 'commercial.toy_and_game'
-				
+				'Board_Games': 'commercial.toy_and_game'
 			};
 
-			const category = categoryMap[hobby]
+			const category = categoryMap[hobby];
 			if (!category) {
-				await interaction.reply(`Sorry, "${hobby}" is not a recognized hobby. Try one of these: shopping, market, dining, sports, arts, movies, nightlife.`);
+				await interaction.reply(`Sorry, "${hobby}" is not a recognized hobby.`);
 				return;
 			}
 
@@ -107,23 +120,3 @@ module.exports = {
 		}
 	},
 };
-
-// //https://api.geoapify.com/v2/places?categories=commercial.supermarket&filter=rect%3A10.716463143326969%2C48.755151258420966%2C10.835314015356737%2C48.680903341613316&limit=20&apiKey=e391a7e5c6144c83abfa40cfca71c114
-
-// var config = {
-//   method: 'get',
-//   url: 'https://api.geoapify.com/v2/places?categories=commercial.supermarket&filter=rect%3A10.716463143326969%2C48.755151258420966%2C10.835314015356737%2C48.680903341613316&limit=20&apiKey=e391a7e5c6144c83abfa40cfca71c114',
-//   headers: { }
-// };
-
-// axios(config)
-// .then(function (response) {
-//   console.log(response.data);
-// })
-// .catch(function (error) {
-//   console.log(error);
-// });
-
-
-//geocode url for lat and lon
-// https://api.geoapify.com/v1/geocode/search?text=38%20Upper%20Montagu%20Street%2C%20Westminster%20W1H%201LJ%2C%20United%20Kingdom&apiKey=e391a7e5c6144c83abfa40cfca71c114
