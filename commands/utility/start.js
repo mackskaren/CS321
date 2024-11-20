@@ -18,14 +18,14 @@ module.exports = {
 		console.log('command caller: ', interaction.user.username);
 		// if (owner.user.username === interaction.user.username) {
 			await interaction.guild.members.fetch()
-			.then(fetchedMembers => {
-				fetchedMembers.forEach(member => {
-					if (!member.user.bot) {
-						// member.user.send('testing DM\'ing users!');
-						console.log("===>>>", member.user.username);
-					}
-				})
-			});
+			// .then(fetchedMembers => {
+			// 	fetchedMembers.forEach(member => {
+			// 		if (!member.user.bot) {
+			// 			// member.user.send('testing DM\'ing users!');
+			// 			console.log("===>>>", member.user.username);
+			// 		}
+			// 	})
+			// });
 			await interaction.reply({content: "Welcome the Activity Scheduler!", components: [buttons, choices], });
 			await interaction.followUp({content: "Weekday Availability", components: weekdays});
 			await interaction.followUp({content: "Weekend Availability", components: weekend});

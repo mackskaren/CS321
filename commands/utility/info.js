@@ -24,30 +24,58 @@ module.exports = {
 	},
 };
 
-const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
 const formatInfo = (user) => {
-	let info = `Information for Information for ${user.username}:\nAvailable: ${(user.available) ? 'yes': 'no'}\nHobbies:\n`;
+	let info = `Information for ${user.name}:\n- Available at the moment: ${(user.available) ? 'Yes': 'No'}\n- Activities selected:\n`;
 	for (let i = 1; i < 6; i++) {
 		if (user[`choice${i}`])
-			info += user[`choice${i}`] + '\n';
+			info += `  - ${user[`choice${i}`]}\n`;
 	}
+	info += '- Availability:\n';
 	for (var day of weekday) {
+		// console.log(`${day}`);
 		let schedule = user[`${day}`];
+		// console.log(schedule);
 		schedule = schedule.split(',');
-		if (schedule[0] === 'Unavailable')
-			info += `${day}: Unavailable\n`;
-		else {
-			info += formatSchedule(day, schedule);
-		}
+		info += formatSchedule(day, schedule);
 	}
 	return info;
 };
 
 const formatSchedule = (day, schedule) => {
-	let info = `${day}: `;
-	for (var hour of schedule) {
-		
+	if (schedule[0] === 'Unavailable')
+		return `  - ${day}: Unavailable\n`;
+	let info = `  - ${day}: `;
+	let start = false;
+	let i = 0;
+	while (i < schedule.length) {
+		if (!start) {
+			info += ` ${(schedule[i] % 12) ? schedule[i] % 12 : '12'} `;
+			info += `${(Math.floor(schedule[i] / 12)) ? 'PM' : 'AM'}`;
+			start = true;
+		} else {
+			if (schedule[i] - schedule[i - 1] == 1) {
+				info += ' -';
+			}
+			else {
+				if (info[info.length - 1] !== '-') {
+					info += ',';
+				}
+				else {
+					info += ` ${(schedule[i - 1] % 12) ? schedule[i - 1] % 12 : '12'} `;
+					info += `${(Math.floor(schedule[i - 1] / 12)) ? 'PM' : 'AM'}, `;
+				}
+				start = false;
+				continue;
+			}
+		}
+		i += 1;
 	}
+	if (info[info.length - 1] === '-') {
+		info += ` ${(schedule[schedule.length - 1] % 12) ? schedule[schedule.length - 1] % 12 : '12'} `;
+		info += `${(Math.floor(schedule[schedule.length - 1] / 12)) ? 'PM' : 'AM'}`;
+	}
+	info += '\n';
 	return info;
 }

@@ -14,6 +14,9 @@ const Tags = sequelize.define('users', {
 		type: Sequelize.STRING,
 		unique: true,
 	},
+	guildId: {
+		type: Sequelize.STRING,
+	},
 	available: {
 		type: Sequelize.BOOLEAN,
 		defaultValue: false
@@ -93,6 +96,7 @@ const addTag = async (interaction) => {
 		// equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
         const tag = await Tags.create({
 			name: tagName,
+			guildId: interaction.guildId,
             zipcode: 0,
 			choice1: null,
 			choice2: null,
@@ -128,7 +132,7 @@ const getUser = async (interaction) => {
 	// await interaction.deferReply({ephemeral: true});
 	// const name = interaction.user.username;
 	// equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
-	return await Tags.findOne({ where: { name: interaction.user.username } });
+	return await Tags.findOne({ where: { name: interaction.user.username, guildId: interaction.guildId } });
 	
 	// if (tag) {
 	// 	// equivalent to: UPDATE tags SET usage_count = usage_count + 1 WHERE name = 'tagName';
@@ -169,7 +173,7 @@ const tagInfo = async (interaction)  => {
 	
 	// equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
 	// const tag = await Tags.findOne({ where: { name: tagName } });
-	return await Tags.findOne({ where: { name: interaction.user.username } });
+	return await Tags.findOne({ where: { name: interaction.user.username, guildId: interaction.guildId } });
 	// if (tag) {
 	// 	return await interaction.editReply(`${tagName} was created by ${tag.username} at ${tag.createdAt} and has been used ${tag.usage_count} times.`);
 	// }
@@ -177,15 +181,16 @@ const tagInfo = async (interaction)  => {
 	// return await interaction.editReply(`Could not find tag: ${tagName}`);
 };
 
-const getAvailable = async () => {
+const getAvailable = async (interaction) => {
 	// equivalent to: SELECT name FROM tags;
 	// await interaction.deferReply({ephemeral: true});
 	
 	// const names = await Tags.findAll({ where: { available: true}});
 	// names = names.map(t => t.name).join('\n'); //|| 'No tags set.';
-	return await Tags.findAll({ where: { available: true}});
+	return await Tags.findAll({ where: { available: true, guildId: interaction.guildId}});
 	// return await interaction.editReply(`Available Users: ${tagString}`);
 };
+
 
 const deleteTag = async (interaction) => {
 	const tagName = interaction.user.username;
@@ -209,6 +214,9 @@ const updateAvailability = async (flag) => {
 	const today = weekday[date.getDay()];
 	const people = await Tags.findAll();
 	// console.log(people);
+	// people.array.forEach(element => {
+		
+	// });
 	for (let person of people) {
 		// console.log(person.name, person.days[today]);
 		if (person[today].includes(date.getHours()))
@@ -218,6 +226,7 @@ const updateAvailability = async (flag) => {
 		await person.save();  //{available: person.available});
 		// await Tags.update({available: true}, { where: {name : person.name}});
 	}
+	// await Tags.update({})
 };
 
 module.exports = {

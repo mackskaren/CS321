@@ -6,8 +6,12 @@ const options = [
         .setValue('Reading')
         .setEmoji("📚"),
     new StringSelectMenuOptionBuilder()
+        .setLabel('Shopping')
+        .setValue('Shopiing')
+        .setEmoji("🛍️"),
+    new StringSelectMenuOptionBuilder()
         .setLabel('Watching TV shows and Movies')
-        .setValue('Watching_TV_Shows_and_Movies')
+        .setValue('Watching TV Shows and Movies')
         .setEmoji("📺"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Music (listening, playing instruments, singing)')
@@ -18,52 +22,40 @@ const options = [
         .setValue('Exercising')
         .setEmoji("🏋️"),
     new StringSelectMenuOptionBuilder()
+        .setLabel('Dining')
+        .setValue('Dining')
+        .setEmoji("🍽️"),    
+    new StringSelectMenuOptionBuilder()
         .setLabel('Photography and videography')
-        .setValue('Photography_and_Videography')
+        .setValue('Photography and Videography')
         .setEmoji("📷"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Playing sports (e.g., soccer, basketball, or e-sports)')
-        .setValue('Playing_Sports')
+        .setValue('Playing Sports')
         .setEmoji("⚽"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Cooking or baking')
-        .setValue('Cooking_or_Baking')
+        .setValue('Cooking or Baking')
         .setEmoji("🍳"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Creative writing')
-        .setValue('Creative_Writing')
+        .setValue('Creative Writing')
         .setEmoji("✍️"),
     new StringSelectMenuOptionBuilder()
         .setLabel('DIY crafts and art projects')
-        .setValue('DIY_Crafts')
+        .setValue('DIY Crafts')
         .setEmoji("🎨"),
     new StringSelectMenuOptionBuilder()
-        .setLabel('Skateboarding')
-        .setValue('Skateboarding')
-        .setEmoji("🛹"),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('Rollerblading')
-        .setValue('Rollerblading')
-        .setEmoji("🛼"),
-    new StringSelectMenuOptionBuilder()
         .setLabel('Fashion and styling')
-        .setValue('Fashion_and_Styling')
+        .setValue('Fashion and Styling')
         .setEmoji("👗"),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('Dancing')
-        .setValue('Dancing')
-        .setEmoji("💃"),
-    new StringSelectMenuOptionBuilder()
-        .setLabel('Singing')
-        .setValue('Singing')
-        .setEmoji("🎤"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Camping')
         .setValue('Camping')
         .setEmoji("🏕️"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Hiking and nature exploration')
-        .setValue('Hiking_and_Nature_Exploration')
+        .setValue('Hiking and Nature Exploration')
         .setEmoji("🥾"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Gardening or plant care')
@@ -71,16 +63,24 @@ const options = [
         .setEmoji("🌱"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Board games or tabletop games')
-        .setValue('Board_Games')
+        .setValue('Board Games')
         .setEmoji("🎲"),
     new StringSelectMenuOptionBuilder()
-        .setLabel('Volunteering and social activism')
-        .setValue('Volunteering')
-        .setEmoji("🤝"),
+        .setLabel('Casino')
+        .setValue('Casino')
+        .setEmoji("🎲"),
     new StringSelectMenuOptionBuilder()
-        .setLabel('Meditation and mindfulness practices')
-        .setValue('Meditation')
-        .setEmoji("🧘"),
+        .setLabel('Volunteering')
+        .setValue('Volunteering')
+        .setEmoji("❤️"),
+    new StringSelectMenuOptionBuilder()
+        .setLabel('Ice Skating')
+        .setValue('Ice Skating')
+        .setEmoji("⛸️"),
+    new StringSelectMenuOptionBuilder()
+        .setLabel('NightLife')
+        .setValue('NightLife')
+        .setEmoji("🪩"),
 ];
 
 
