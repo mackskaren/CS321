@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { tagInfo } = require("../../models/tag.js");
+const { getUser } = require("../../models/tag.js");
 
 
 module.exports = {
@@ -8,7 +8,7 @@ module.exports = {
 		.setDescription('Display user\'s information'),
 	async execute(interaction) {
 		await interaction.deferReply({ephemeral: true});
-		let user = await tagInfo(interaction);
+		let user = await getUser(interaction);
 		// console.log(names);
 		// names = names.map(entry => entry.user).join('\n'); //|| 'No tags set.';
 		if (user) {
@@ -27,7 +27,7 @@ module.exports = {
 const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
 const formatInfo = (user) => {
-	let info = `Information for ${user.name}:\n- Available at the moment: ${(user.available) ? 'Yes': 'No'}\n- Activities selected:\n`;
+	let info = `Information for ${user.name}:\n- Zip: ${user.zipcode}\n- Available at the moment: ${(user.available) ? 'Yes': 'No'}\n- Activities selected:\n`;
 	for (let i = 1; i < 6; i++) {
 		if (user[`choice${i}`])
 			info += `  - ${user[`choice${i}`]}\n`;

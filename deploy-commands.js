@@ -39,9 +39,9 @@ const rest = new REST().setToken(token);
 			// Routes.applicationGuildCommands(clientId, guildId), //deploy to specific server
 		);
 
-	// 	rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })  // deleting guild commands
-	// .then(() => console.log('Successfully deleted all guild commands.'))
-	// .catch(console.error);
+		// const data = await rest.put(Routes.applicationCommands(clientId), { body: [] })
+		// .then(() => console.log('Successfully deleted all application commands.'))
+		// .catch(console.error);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {

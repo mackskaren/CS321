@@ -1,5 +1,5 @@
 const {Events} = require('discord.js');
-const {updateAvailability} = require('../models/tag.js');
+const {updateAvailability, makeDummies} = require('../models/tag.js');
 
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
         const {Tags} = require('../models/tag.js');
         await Tags.sync();
         console.log(`Logged in as ${client.user.tag}!`);
-        
+        makeDummies();
         updateAvailability(0);
         const date = new Date();
         let time = 60000 * (60 - date.getMinutes()) + 1000;

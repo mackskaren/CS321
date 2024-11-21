@@ -7,7 +7,7 @@ const options = [
         .setEmoji("📚"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Shopping')
-        .setValue('Shopiing')
+        .setValue('Shopping')
         .setEmoji("🛍️"),
     new StringSelectMenuOptionBuilder()
         .setLabel('Watching TV shows and Movies')

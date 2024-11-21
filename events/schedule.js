@@ -1,4 +1,9 @@
-const {getUser} = require("../models/tag.js");
+const { getUser } = require("../models/tag.js");
+const cryptojs = require('crypto-js');
+let { aes_key } = require('../config.json');
+aes_key = cryptojs.enc.Utf8.parse(aes_key);
+
+
 
 // const updateSchedule = (async interaction => {
 
@@ -23,7 +28,7 @@ const updateSchedule = async (interaction) => {
     const day = interaction.customId;
 	const tagName = interaction.user.username;
     // const hours = availability.toString();
-	const hours = (availability[availability.length - 1] !== 'u') ? availability.toString() : "Unavailable";
+	let hours = (availability[availability.length - 1] !== 'u') ? availability.toString() : "Unavailable";
 	
     await interaction.deferReply({ephemeral: true});
 	
@@ -32,16 +37,20 @@ const updateSchedule = async (interaction) => {
 		return await interaction.editReply({content: `Please join the bot services first.`, ephemeral: true});
 	// console.log(record);
 	// record.days[day] = hours;
-	record[day] = hours;
-	// console.log(record);
+	record[day] = cryptojs.AES.encrypt(hours, aes_key, {iv : cryptojs.enc.Base64.parse(`${record.name}${day}`),}).toString();
+	console.log(record[day]);
 	// await record.update({days: record.days});
 	const date = new Date();
-	const today = weekday[date.getDay()];
-	if (record[today].includes(date.getHours()))
+	let today = weekday[date.getDay()];
+	// console.log(hours);
+	// hours = cryptojs.AES.decrypt(record[today], aes_key, {iv : cryptojs.enc.Base64.parse(`${record.name}${today}`),}).toString(cryptojs.enc.Utf8);
+	today = (today === day) ? hours : record[today];
+	console.log(today);
+	if (today.includes(date.getHours()))
 		record.available = true;
 	else 
 		record.available = false;
-	await record.save();
+	await record.save({fields: [day, 'available']});
 	// await Tags.update({available: record.available, days : record.days}, { where: {name : tagName}});
 
 	return await interaction.editReply({content: `Schedule for ${tagName} was updated.`, ephemeral: true});
