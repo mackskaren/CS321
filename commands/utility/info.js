@@ -24,7 +24,7 @@ module.exports = {
 	},
 };
 
-const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+const weekday = ["monday","tuesday","wednesday","thursday","friday","saturday", "sunday",];
 
 const formatInfo = (user) => {
 	let info = `Information for ${user.name}:\n- Zip: ${user.zipcode}\n- Available at the moment: ${(user.available) ? 'Yes': 'No'}\n- Activities selected:\n`;

@@ -5,12 +5,12 @@ const select = require('./hobbies.js')
 const buttons = new ActionRowBuilder();
 const button1 = new ButtonBuilder()
 	.setCustomId("add to database")
-    .setLabel("Join Bot Services")
+    .setLabel("Join DARB")
     .setEmoji("🤝")
 	.setStyle(ButtonStyle.Primary);
 const button2 = new ButtonBuilder()
 	.setCustomId("leave database")
-    .setLabel('Leave Bot Services')
+    .setLabel('Leave DARB')
     .setEmoji('👋')
 	.setStyle(ButtonStyle.Danger);
 const button3 = new ButtonBuilder()

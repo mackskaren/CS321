@@ -1,22 +1,4 @@
-const { getUser } = require("../models/tag.js");
-const cryptojs = require('crypto-js');
-let { aes_key } = require('../config.json');
-aes_key = cryptojs.enc.Utf8.parse(aes_key);
-
-
-
-// const updateSchedule = (async interaction => {
-
-//     // console.log(interaction);
-//     let availability = interaction.values;
-//     // console.log(hobbies);
-//     availability.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-//     const day = interaction.customId;
-//     // const date = new Date();
-//     await updateDays(interaction, day, availability.toString());
-//     // await interaction.reply({content: `Day: ${day}\nAvailability: ${availability.toString()}`, ephemeral: true});
-//     // console.log(hobbies);
-// });
+const { getUser, encrypt, } = require("../models/tag.js");
 
 const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
@@ -34,19 +16,18 @@ const updateSchedule = async (interaction) => {
 	
 	const record = await getUser(interaction);
 	if (!record)
-		return await interaction.editReply({content: `Please join the bot services first.`, ephemeral: true});
+		return await interaction.editReply({content: `Please join DARB first.`, ephemeral: true});
 	// console.log(record);
 	// record.days[day] = hours;
-	record[day] = cryptojs.AES.encrypt(hours, aes_key, {iv : cryptojs.enc.Base64.parse(`${record.name}${day}`),}).toString();
-	console.log(record[day]);
+	record[day] = encrypt(hours, `${record.name}${day}`);
+	// console.log(record[day]);
 	// await record.update({days: record.days});
 	const date = new Date();
 	let today = weekday[date.getDay()];
 	// console.log(hours);
-	// hours = cryptojs.AES.decrypt(record[today], aes_key, {iv : cryptojs.enc.Base64.parse(`${record.name}${today}`),}).toString(cryptojs.enc.Utf8);
 	today = (today === day) ? hours : record[today];
-	console.log(today);
-	if (today.includes(date.getHours()))
+	// console.log(today);
+	if (today.includes(date.getHours().toString()))
 		record.available = true;
 	else 
 		record.available = false;

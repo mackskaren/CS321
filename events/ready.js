@@ -1,13 +1,12 @@
 const {Events} = require('discord.js');
-const {updateAvailability, makeDummies} = require('../models/tag.js');
+const {updateAvailability, makeDummies, sync} = require('../models/tag.js');
 
 
 module.exports = {
     name: Events.ClientReady,
     once: true,
     async execute (client) {
-        const {Tags} = require('../models/tag.js');
-        await Tags.sync();
+        await sync;
         console.log(`Logged in as ${client.user.tag}!`);
         makeDummies();
         updateAvailability(0);

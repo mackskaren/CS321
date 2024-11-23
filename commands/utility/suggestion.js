@@ -32,7 +32,7 @@ module.exports = {
 		//user who triggered command
 		let user = await getUser(interaction);
 		if (!user){
-			await interaction.reply({content: `Please join the bot services.`, ephemeral: true});
+			await interaction.reply({content: `Please join DARB first.`, ephemeral: true});
 			return;
 		}
 

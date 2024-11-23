@@ -92,20 +92,20 @@ const addTag = async (interaction) => {
 		// equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
         const tag = await Tags.create({
 			name: tagName,
-			guildId: interaction.guildId,
-            zipcode: cryptojs.AES.encrypt('00000', aes_key, { iv: cryptojs.enc.Base64.parse(tagName)}).toString(), // { iv: cryptojs.enc.Base64.parse(tagName)}
+			guildId: cryptojs.SHA3(interaction.guildId, {outputLength : 256}).toString(),
+            zipcode: encrypt('00000', tagName), //cryptojs.AES.encrypt('00000', aes_key, { iv: cryptojs.enc.Base64.parse(btoa(tagName))}).toString(), // { iv: cryptojs.enc.Base64.parse(tagName)}
 			choice1: null,
 			choice2: null,
 			choice3: null,
 			choice4: null,
 			choice5: null,
-			monday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}monday`), }).toString(),
-			tuesday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}tuesday`), }).toString(),
-			wednesday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}wednesday`), }).toString(),
-			thursday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}thursday`), }).toString(),
-			friday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}friday`), }).toString(),
-			saturday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}saturday`), }).toString(),
-			sunday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}sunday`), }).toString(),
+			monday: encrypt("Unavailable", `${tagName}monday`), // cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}monday`)), }).toString(),
+			tuesday: encrypt("Unavailable", `${tagName}tuesday`), //cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}tuesday`)), }).toString(),
+			wednesday: encrypt("Unavailable", `${tagName}wednesday`), //cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}wednesday`)), }).toString(),
+			thursday: encrypt("Unavailable", `${tagName}thursday`), //cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}thursday`)), }).toString(),
+			friday: encrypt("Unavailable", `${tagName}friday`), //cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}friday`)), }).toString(),
+			saturday: encrypt("Unavailable", `${tagName}saturday`), //cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}saturday`)), }).toString(),
+			sunday: encrypt("Unavailable", `${tagName}sunday`) //cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}sunday`)), }).toString(),
 
         });
         return await interaction.editReply({content: ` ${tag.name} joined.`, ephemeral: true, });
@@ -126,12 +126,13 @@ const getUser = async (interaction) => {
 	// await interaction.deferReply({ephemeral: true});
 	// const name = interaction.user.username;
 	// equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
-	const user = await Tags.findOne({ where: { name: interaction.user.username, guildId: interaction.guildId } });
+	const guildId = cryptojs.SHA3(interaction.guildId, {outputLength : 256}).toString();
+	const user = await Tags.findOne({ where: { name: interaction.user.username, guildId: guildId } });
 	// console.log(user.zipcode);
 	if (user) {         //{ iv: cryptojs.enc.Base64.parse(user.name)}
-		user.zipcode = cryptojs.AES.decrypt(user.zipcode, aes_key, { iv: cryptojs.enc.Base64.parse(user.name) }).toString(cryptojs.enc.Utf8);
+		user.zipcode = decrypt(user.zipcode, user.name); //cryptojs.AES.decrypt(user.zipcode, aes_key, { iv: cryptojs.enc.Base64.parse(btoa(user.name)) }).toString(cryptojs.enc.Utf8);
 		for (day of weekday)
-			user[day] = cryptojs.AES.decrypt(user[day], aes_key, { iv: cryptojs.enc.Base64.parse(`${user.name}${day}`), } ).toString(cryptojs.enc.Utf8);
+			user[day] = decrypt(user[day], `${user.name}${day}`); //cryptojs.AES.decrypt(user[day], aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${user.name}${day}`)), } ).toString(cryptojs.enc.Utf8);
 	}
 	// console.log(user.zipcode);
 	return user;
@@ -161,7 +162,7 @@ const editTag = async (interaction, addition) => {
 	}
 	else {
 		// console.log(addition.toString());
-		var ciphertext = cryptojs.AES.encrypt(`${addition}`, aes_key, { iv: cryptojs.enc.Base64.parse(tagName) });
+		var ciphertext = encrypt(`${addition}`, tagName); //cryptojs.AES.encrypt(`${addition}`, aes_key, { iv: cryptojs.enc.Base64.parse(btoa(tagName)) });
 		// console.log(ciphertext.toString());
 		// console.log(ciphertext.ciphertext.toString())
 		// var plaintext = cryptojs.AES.decrypt(ciphertext, aes_key, { iv: tagName});
@@ -169,11 +170,10 @@ const editTag = async (interaction, addition) => {
 		affectedRows = await Tags.update({zipcode: ciphertext.toString()}, {where: { name : tagName }});
 	}
 
-	if (affectedRows > 0) {
+	if (affectedRows > 0)
 		return await interaction.editReply({content: `Information for ${tagName} was updated.`, ephemeral: true});
-	}
 
-	return await interaction.editReply({content: `Please join first.`, ephemeral: true});
+	return await interaction.editReply({content: `Please join DARB first.`, ephemeral: true});
 };
 
 const getAvailable = async (interaction) => {
@@ -182,7 +182,8 @@ const getAvailable = async (interaction) => {
 	
 	// const names = await Tags.findAll({ where: { available: true}});
 	// names = names.map(t => t.name).join('\n'); //|| 'No tags set.';
-	const people = await Tags.findAll({ where: { available: true, guildId: interaction.guildId}});
+	const guildId = cryptojs.SHA3(interaction.guildId, {outputLength : 256}).toString();
+	const people = await Tags.findAll({ where: { available: true, guildId: guildId } });
 	// for (let user of people) {
 	// 	user.zipcode = cryptojs.AES.decrypt(user.zipcode, aes_key, { iv: cryptojs.enc.Base64.parse(user.name) }).toString(cryptojs.enc.Utf8);
 	// 	for (day of weekday)
@@ -201,9 +202,9 @@ const deleteTag = async (interaction) => {
 	// equivalent to: DELETE from tags WHERE name = ?;
 	const rowCount = await Tags.destroy({ where: { name: tagName } });
 	
-	if (!rowCount) return await interaction.editReply({content: 'No entry found.', ephemeral: true});
+	if (!rowCount) return await interaction.editReply({content: 'Not part of DARB.', ephemeral: true});
 	
-	return await interaction.editReply({content: 'Information deleted.', ephemeral: true});
+	return await interaction.editReply({content: `${interaction.user.username} left.`, ephemeral: true});
 };
 
 const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
@@ -221,7 +222,7 @@ const updateAvailability = async (flag) => {
 	// });
 	for (let person of people) {
 		// console.log(person.name, person.days[today]);
-		const hours = cryptojs.AES.decrypt(person[today], aes_key, {iv : cryptojs.enc.Base64.parse(`${person.name}${today}`), }).toString(cryptojs.enc.Utf8);
+		const hours = decrypt(person[today], `${person.name}${today}`); //cryptojs.AES.decrypt(person[today], aes_key, {iv : cryptojs.enc.Base64.parse(btoa(`${person.name}${today}`)), }).toString(cryptojs.enc.Utf8);
 		// console.log(hours);
 		if (hours.includes(date.getHours()))
 			person.available = true;
@@ -235,31 +236,34 @@ const updateAvailability = async (flag) => {
 
 const makeDummies = async() => {
 	for (let i = 0; i < 6; i++) {
+		let tagName = `testuser${i}`;
 		try {
 			// equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
-			let tagName = `testuser${i}`;
-			const tag = await Tags.create({
-				name: tagName,
-				guildId: "1292674847813537812",
-				zipcode: cryptojs.AES.encrypt('00000', aes_key, { iv: cryptojs.enc.Base64.parse(tagName)}).toString(), // { iv: cryptojs.enc.Base64.parse(tagName)}
-				choice1: null,
-				choice2: null,
-				choice3: null,
-				choice4: null,
-				choice5: null,
-				monday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}monday`), }).toString(),
-				tuesday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}tuesday`), }).toString(),
-				wednesday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}wednesday`), }).toString(),
-				thursday: cryptojs.AES.encrypt("12", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}thursday`), }).toString(),
-				friday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}friday`), }).toString(),
-				saturday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}saturday`), }).toString(),
-				sunday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(`${tagName}sunday`), }).toString(),
+			// console.log(tagName);
+			// const name = cryptojs.enc.Base64.parse(tagName);
+			// const tag = await Tags.create({
+			// 	name: tagName,
+			// 	guildId: cryptojs.SHA3("1292674847813537812", {outputLength : 256}).toString(),
+			// 	zipcode: cryptojs.AES.encrypt('00000', aes_key, { iv: cryptojs.enc.Base64.parse(btoa(tagName))}).toString(), // { iv: cryptojs.enc.Base64.parse(tagName)}
+			// 	choice1: null,
+			// 	choice2: null,
+			// 	choice3: null,
+			// 	choice4: null,
+			// 	choice5: null,
+			// 	monday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}monday`)), }).toString(),
+			// 	tuesday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}tuesday`)), }).toString(),
+			// 	wednesday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}wednesday`)), }).toString(),
+			// 	thursday: cryptojs.AES.encrypt("12", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}thursday`)), }).toString(),
+			// 	friday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}friday`)), }).toString(),
+			// 	saturday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}saturday`)), }).toString(),
+			// 	sunday: cryptojs.AES.encrypt("Unavailable", aes_key, { iv: cryptojs.enc.Base64.parse(btoa(`${tagName}sunday`)), }).toString(),
 	
-			});
+			// });
 			// return await interaction.editReply({content: ` ${tag.name} joined.`, ephemeral: true, });
 		}
 		catch (error) {
 			// console.log(error);
+			// await Tags.destroy({where: { name : tagName}})
 			if (error.name === 'SequelizeUniqueConstraintError') {
 				// return await interaction.editReply({content: 'Already joined.', ephemeral: true});
 			}
@@ -269,13 +273,22 @@ const makeDummies = async() => {
 	}
 }
 
+const encrypt = (plaintext, iv) => {
+	return cryptojs.AES.encrypt(plaintext, aes_key, { iv: cryptojs.enc.Base64.parse(btoa(iv)), }).toString();
+};
+
+const decrypt = (ciphertext, iv) => {
+	return cryptojs.AES.decrypt(ciphertext, aes_key, { iv: cryptojs.enc.Base64.parse(btoa(iv)), }).toString(cryptojs.enc.Utf8);
+};
+
 module.exports = {
-	Tags,
+	sync: Tags.sync(),
 	addTag,
 	getUser,
 	editTag,
 	getAvailable,
 	deleteTag,
 	updateAvailability,
-	makeDummies
+	makeDummies,
+	encrypt,
 };
